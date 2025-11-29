@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ローグモンスターコレクション</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="main-area">
+            <div class="game-header">
+                <h1>🗡️ ローグモンスターコレクション 🐉</h1>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="game-canvas"></canvas>
+            </div>
+
+            <div class="panel" id="messages-panel">
+                <h3>📜 メッセージ</h3>
+                <div id="message-log"></div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="panel" id="player-stats">
+                <h3>👤 プレイヤー</h3>
+            </div>
+
+            <div class="panel" id="party-info">
+                <h3>🎒 パーティ</h3>
+            </div>
+
+            <div class="panel" id="inventory-panel">
+                <h3>🎒 アイテム</h3>
+            </div>
+
+            <div class="panel" id="combat-ui">
+                <h3>⚔️ 戦闘</h3>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-over">
+        <div class="game-over-content">
+            <h2>ゲームオーバー</h2>
+            <div class="game-over-stats"></div>
+            <button class="restart-btn" onclick="restartGame()">もう一度挑戦！</button>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="items.js"></script>
+    <script src="monsters.js"></script>
+    <script src="entities.js"></script>
+    <script src="dungeon.js"></script>
+    <script src="score.js"></script>
+    <script src="combat.js"></script>
+    <script src="renderer.js"></script>
+    <script src="ui.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>

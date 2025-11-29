@@ -1,0 +1,180 @@
+// 戦闘システム
+
+class Combat {
+    constructor(player, enemy, game) {
+        this.player = player;
+        this.enemy = enemy;
+        this.game = game;
+        this.isActive = true;
+        this.turn = 'player'; // 'player' or 'enemy'
+        this.actionQueue = [];
+    }
+
+    start() {
+        // 戦闘開始前に生きているモンスターに自動切り替え
+        if (!this.player.activeMonster || this.player.activeMonster.isDead()) {
+            if (!this.player.autoSwitchToAliveMonster()) {
+                this.game.addMessage('戦闘できるモンスターがいません！');
+                this.isActive = false;
+                return;
+            }
+        }
+
+        const playerMonster = this.player.activeMonster;
+        if (!playerMonster) {
+            this.game.addMessage('戦闘できるモンスターがいません！');
+            this.isActive = false;
+            return;
+        }
+
+        this.game.addMessage(`${this.enemy.displayName} が現れた！`);
+        this.game.addMessage(`${playerMonster.name} 出てこい！`);
+
+        // スピードで先攻を決定
+        if (this.enemy.speed > playerMonster.speed) {
+            this.turn = 'enemy';
+            setTimeout(() => this.enemyAction(), 1000);
+        } else {
+            // プレイヤー先攻の場合もUIを更新
+            this.game.render();
+        }
+    }
+
+    playerAttack(skillIndex = 0) {
+        if (!this.isActive || this.turn !== 'player') return;
+
+        const playerMonster = this.player.activeMonster;
+        if (!playerMonster || playerMonster.isDead()) {
+            this.game.addMessage('戦闘できるモンスターがいません！');
+            this.end(false);
+            return;
+        }
+
+        const result = playerMonster.useSkill(skillIndex, this.enemy);
+        this.game.addMessage(`${playerMonster.name} の ${result.skill.name}！`);
+        this.game.addMessage(`${this.enemy.name} に ${result.actualDamage} のダメージ！`);
+
+        // 攻撃後にUIを更新
+        this.game.render();
+
+        if (this.enemy.isDead()) {
+            this.playerWin();
+        } else {
+            this.nextTurn();
+        }
+    }
+
+    playerCapture() {
+        if (!this.isActive || this.turn !== 'player') return;
+
+        const playerMonster = this.player.activeMonster;
+
+        // 捕獲率の計算（敵のHP割合で変動）
+        const hpRatio = this.enemy.hp / this.enemy.maxHp;
+        const baseCaptureRate = this.enemy.data.captureRate;
+        const adjustedRate = baseCaptureRate * (1.5 - hpRatio); // HPが少ないほど捕獲しやすい
+
+        this.game.addMessage(`${playerMonster.name} は ${this.enemy.name} を捕まえようとしている...`);
+
+        if (chance(adjustedRate)) {
+            this.captureSuccess();
+        } else {
+            this.game.addMessage('捕獲に失敗した！');
+            this.nextTurn();
+        }
+    }
+
+    captureSuccess() {
+        this.game.addMessage(`${this.enemy.name} を捕まえた！`);
+
+        // スコア加算
+        this.game.scoreManager.addCaptureScore(this.enemy);
+
+        if (this.player.addMonster(this.enemy)) {
+            this.game.addMessage(`${this.enemy.name} がパーティに加わった！`);
+            this.game.dungeon.removeMonster(this.enemy);
+        } else {
+            this.game.addMessage('パーティが満員のため、逃がした。');
+        }
+
+        this.end(true);
+    }
+
+    enemyAction() {
+        if (!this.isActive || this.turn !== 'enemy') return;
+
+        const playerMonster = this.player.activeMonster;
+        const damage = this.enemy.attack(playerMonster);
+
+        this.game.addMessage(`${this.enemy.name} の攻撃！`);
+        this.game.addMessage(`${playerMonster.name} に ${damage} のダメージ！`);
+
+        // 攻撃後にUIを更新
+        this.game.render();
+
+        if (playerMonster.isDead()) {
+            this.game.addMessage(`${playerMonster.name} は倒れた！`);
+            this.end(false);
+        } else {
+            this.nextTurn();
+        }
+    }
+
+    playerWin() {
+        this.enemyDefeated();
+    }
+
+    playerFlee() {
+        if (!this.isActive || this.turn !== 'player') return;
+
+        if (chance(0.5)) {
+            this.game.addMessage('逃げ出した！');
+            this.end(true);
+        } else {
+            this.game.addMessage('逃げられなかった！');
+            this.nextTurn();
+        }
+    }
+
+    enemyDefeated() {
+        const playerMonster = this.player.activeMonster;
+        const expGained = Math.floor(this.enemy.expGiven * (this.enemy.level / playerMonster.level));
+
+        this.game.scoreManager.addBattleScore(this.enemy);
+
+        this.game.addMessage(`${this.enemy.name} を倒した！`);
+        this.game.addMessage(`${playerMonster.name} は ${expGained} の経験値を得た！`);
+
+        this.player.monstersDefeated++;
+
+        if (playerMonster.gainExp(expGained)) {
+            this.game.addMessage(`${playerMonster.name} はレベル ${playerMonster.level} に上がった！`);
+        }
+
+        this.game.dungeon.removeMonster(this.enemy);
+        this.end(true);
+    }
+
+    nextTurn() {
+        this.turn = this.turn === 'player' ? 'enemy' : 'player';
+
+        // UIを更新してターン表示を切り替え
+        this.game.render();
+
+        if (this.turn === 'enemy') {
+            setTimeout(() => this.enemyAction(), 800);
+        }
+    }
+
+    end(playerWon) {
+        this.isActive = false;
+        this.game.combat = null;
+
+        // プレイヤーが負けた場合はゲームオーバー
+        if (!playerWon && !this.player.hasAliveMonsters()) {
+            this.game.endGame();
+        } else {
+            this.game.render();
+        }
+    }
+}
