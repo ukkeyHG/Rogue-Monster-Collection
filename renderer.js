@@ -141,6 +141,20 @@ class Renderer {
         const px = x * tileSize;
         const py = y * tileSize;
 
+        // プレイヤーの背景ハイライト（視認性向上）
+        const centerX = px + tileSize / 2;
+        const centerY = py + tileSize / 2;
+
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, tileSize / 2 - 2, 0, Math.PI * 2);
+        this.ctx.fillStyle = 'rgba(255, 215, 0, 0.4)'; // 半透明の黄色
+        this.ctx.fill();
+        this.ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
+        this.ctx.lineWidth = 2;
+        this.ctx.stroke();
+        this.ctx.restore();
+
         // プレイヤー（アクティブモンスターを表示）
         if (player.activeMonster) {
             this.ctx.font = `${tileSize - 4}px Arial`;

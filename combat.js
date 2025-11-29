@@ -153,6 +153,16 @@ class Combat {
 
         this.game.dungeon.removeMonster(this.enemy);
 
+        // アイテムドロップ判定 (ボスは確定、通常は15%)
+        if (this.enemy.isBoss || Math.random() < 0.15) {
+            const item = rollLoot();
+            if (this.player.addItem(item)) {
+                this.game.addMessage(`${this.enemy.name} は ${item.emoji}${item.name} を落とした！`);
+            } else {
+                this.game.addMessage(`${this.enemy.name} は宝箱を落としたが、持ちきれなかった...`);
+            }
+        }
+
         // ボス撃破時の処理
         if (this.enemy.isBoss) {
             this.game.onBossDefeated(this.enemy);
