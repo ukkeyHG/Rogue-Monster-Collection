@@ -152,6 +152,12 @@ class Combat {
         }
 
         this.game.dungeon.removeMonster(this.enemy);
+
+        // ボス撃破時の処理
+        if (this.enemy.isBoss) {
+            this.game.onBossDefeated(this.enemy);
+        }
+
         this.end(true);
     }
 

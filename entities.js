@@ -13,24 +13,32 @@ class Entity {
 }
 
 class Monster extends Entity {
-    constructor(x, y, type, level = 1, isWild = true) {
+    constructor(x, y, type, level = 1, isWild = true, isBoss = false) {
         super(x, y);
         this.type = type;
         this.data = MONSTER_TYPES[type];
         this.level = level;
         this.isWild = isWild;
+        this.isBoss = isBoss;
         this.exp = 0;
 
         // 経験値（倒された時に与える経験値）
         this.expGiven = this.data.expYield || 10;
+        if (this.isBoss) {
+            this.expGiven *= 5; // ボスは経験値5倍
+        }
 
         // ステータスの初期化
         const stats = calculateStatsForLevel(this.data.baseStats, level);
-        this.hp = stats.hp;
-        this.maxHp = stats.maxHp;
-        this.atk = stats.atk;
-        this.def = stats.def;
-        this.speed = stats.speed;
+
+        // ボス補正
+        const multiplier = isBoss ? 1.5 : 1.0;
+
+        this.hp = Math.floor(stats.hp * (isBoss ? 2.0 : 1.0)); // HPは2倍
+        this.maxHp = this.hp;
+        this.atk = Math.floor(stats.atk * multiplier);
+        this.def = Math.floor(stats.def * multiplier);
+        this.speed = Math.floor(stats.speed * multiplier);
 
         this.skills = [...this.data.skills];
     }

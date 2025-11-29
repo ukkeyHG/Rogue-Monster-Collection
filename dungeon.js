@@ -39,8 +39,8 @@ class Dungeon {
         // 宝箱を配置
         this.placeTreasures();
 
-        // 階段配置
-        this.placeStairs();
+        // 階段はボス撃破後に出現するため、ここでは配置しない
+        // this.placeStairs();
     }
 
     generateRooms() {
@@ -150,6 +150,24 @@ class Dungeon {
                 this.monsters.push(monster);
             }
         }
+
+        // ボス配置（最後に1体追加）
+        let bossPlaced = false;
+        let attempts = 0;
+        while (!bossPlaced && attempts < 50) {
+            const room = randomChoice(this.rooms);
+            const x = randomInt(room.x + 1, room.x + room.width - 2);
+            const y = randomInt(room.y + 1, room.y + room.height - 2);
+
+            if (!this.getMonsterAt(x, y)) {
+                const type = getRandomMonsterType();
+                const level = this.floorLevel + 2; // ボスはレベル高め
+                const boss = new Monster(x, y, type, level, true, true); // isBoss = true
+                this.monsters.push(boss);
+                bossPlaced = true;
+            }
+            attempts++;
+        }
     }
 
     getRandomFloorTile() {
@@ -207,13 +225,14 @@ class Dungeon {
         return this.treasures.find(t => t.x === x && t.y === y && !t.opened);
     }
 
-    placeStairs() {
-        // ランダムな部屋の床に階段を配置
+    spawnStairs() {
+        // ランダムな部屋の床に階段を出現させる
         const room = randomChoice(this.rooms);
         const x = randomInt(room.x + 1, room.x + room.width - 1);
         const y = randomInt(room.y + 1, room.y + room.height - 1);
 
         this.stairsPos = { x, y };
+        return { x, y };
     }
 
     getStairsAt(x, y) {

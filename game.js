@@ -287,6 +287,17 @@ class Game {
         this.init();
     }
 
+    onBossDefeated(boss) {
+        this.addMessage(`👑 フロアの主 ${boss.name} を倒した！`);
+
+        // 階段出現
+        const stairsPos = this.dungeon.spawnStairs();
+        this.addMessage(`どこかで重い音がした... 階段が現れたようだ！`);
+
+        // 視界更新して階段が見えるようにする（オプション）
+        this.render();
+    }
+
     endGame() {
         this.gameOver = true;
         // 最大ダメージボーナスを加算

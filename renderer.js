@@ -170,8 +170,16 @@ class Renderer {
         this.ctx.font = `${tileSize - 4}px Arial`;
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
+
+        // ボスの場合、少し大きく表示したり、特別なマークを付ける
+        let displayText = monster.emoji;
+        if (monster.isBoss) {
+            displayText = '👑' + monster.emoji;
+            this.ctx.font = `${tileSize - 2}px Arial`; // 少し大きく
+        }
+
         this.ctx.fillText(
-            monster.emoji,
+            displayText,
             px + tileSize / 2,
             py + tileSize / 2
         );
