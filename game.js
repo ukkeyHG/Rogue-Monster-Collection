@@ -230,11 +230,12 @@ class Game {
         this.player.party[fromIndex] = this.player.party[toIndex];
         this.player.party[toIndex] = temp;
 
-        // activeMonsterIndexを更新
-        if (this.player.activeMonsterIndex === fromIndex) {
-            this.player.activeMonsterIndex = toIndex;
-        } else if (this.player.activeMonsterIndex === toIndex) {
-            this.player.activeMonsterIndex = fromIndex;
+        // 先頭のモンスターをアクティブ（表示用）にする
+        this.player.activeMonsterIndex = 0;
+
+        // もし先頭が死んでいたら、生きているモンスターを探す
+        if (this.player.party[0].isDead()) {
+            this.player.autoSwitchToAliveMonster();
         }
 
         this.addMessage(`パーティーの順番を入れ替えた！`);
