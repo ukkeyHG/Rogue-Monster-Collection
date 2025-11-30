@@ -132,6 +132,31 @@ body {
     flex-shrink: 0;
 }
 
+.menu-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #4fc3f7 0%, #2196f3 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
+}
+
+.menu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(33, 150, 243, 0.5);
+}
+
+.menu-btn:active {
+    transform: translateY(0);
+}
+
 .panel {
     background: rgba(30, 30, 50, 0.9);
     border-radius: 10px;
@@ -575,6 +600,168 @@ body {
     background: rgba(79, 195, 247, 0.7);
 }
 
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.party-swap-content {
+    background: rgba(30, 30, 50, 0.95);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 700px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(79, 195, 247, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.party-swap-content .modal-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.party-swap-content .modal-header h2 {
+    font-size: 24px;
+    color: #4fc3f7;
+    margin-bottom: 8px;
+}
+
+.party-swap-content .modal-header p {
+    font-size: 14px;
+    color: #b0b0b0;
+}
+
+.new-monster-section {
+    margin-bottom: 24px;
+}
+
+.new-monster-section h3,
+.party-section h3 {
+    font-size: 16px;
+    color: #4fc3f7;
+    margin-bottom: 12px;
+    border-bottom: 2px solid rgba(79, 195, 247, 0.3);
+    padding-bottom: 6px;
+}
+
+.swap-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.swap-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(79, 195, 247, 0.4);
+    transform: translateY(-2px);
+}
+
+.swap-card.active {
+    border-color: #4fc3f7;
+    background: rgba(79, 195, 247, 0.1);
+}
+
+.swap-card.new-monster {
+    border-color: #ffc107;
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.swap-card.new-monster:hover {
+    border-color: #ffd54f;
+    background: rgba(255, 193, 7, 0.15);
+}
+
+.swap-card .monster-emoji {
+    font-size: 48px;
+    flex-shrink: 0;
+}
+
+.swap-card .monster-info {
+    flex: 1;
+}
+
+.swap-card .monster-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.swap-card .monster-level {
+    font-size: 14px;
+    color: #4fc3f7;
+    margin-bottom: 6px;
+}
+
+.swap-card .monster-stats-compact {
+    font-size: 12px;
+    color: #a0a0a0;
+}
+
+.release-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+}
+
+.release-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.5);
+}
+
+.party-swap-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 @media (max-width: 1200px) {
     .game-container {
         flex-direction: column;
@@ -585,4 +772,247 @@ body {
         width: 100%;
         max-height: 400px;
     }
+}
+
+/* モンスター図鑑 */
+.dex-content {
+    max-width: 900px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.dex-stats {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #b0b0b0;
+}
+
+.dex-container {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.dex-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.dex-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    aspect-ratio: 1;
+}
+
+.dex-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dex-card.captured {
+    border-color: #4fc3f7;
+    background: rgba(79, 195, 247, 0.1);
+}
+
+.dex-card.seen {
+    border-color: #b0b0b0;
+}
+
+.dex-card.unknown {
+    opacity: 0.5;
+}
+
+.dex-emoji {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+.dex-emoji.grayscale {
+    filter: grayscale(100%);
+    opacity: 0.7;
+}
+
+.dex-name {
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.dex-rarity {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+    font-weight: 700;
+}
+
+.dex-rarity.common {
+    color: #b0b0b0;
+    background: rgba(176, 176, 176, 0.2);
+}
+
+.dex-rarity.uncommon {
+    color: #4caf50;
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.dex-rarity.rare {
+    color: #2196f3;
+    background: rgba(33, 150, 243, 0.2);
+}
+
+.dex-rarity.legendary {
+    color: #ffc107;
+    background: rgba(255, 193, 7, 0.2);
+}
+
+.dex-status {
+    font-size: 10px;
+    color: #b0b0b0;
+    margin-top: 4px;
+}
+
+.dex-detail-view {
+    width: 300px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.detail-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #808080;
+    font-style: italic;
+}
+
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-emoji {
+    font-size: 48px;
+}
+
+.detail-info h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #e0e0e0;
+}
+
+.rarity-badge {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.rarity-badge.common {
+    background: #757575;
+    color: white;
+}
+
+.rarity-badge.uncommon {
+    background: #388e3c;
+    color: white;
+}
+
+.rarity-badge.rare {
+    background: #1976d2;
+    color: white;
+}
+
+.rarity-badge.legendary {
+    background: #ffa000;
+    color: black;
+}
+
+.rarity-badge.unknown {
+    background: #424242;
+    color: #9e9e9e;
+}
+
+.detail-stats {
+    margin-bottom: 20px;
+}
+
+.detail-stats .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-skills {
+    margin-bottom: 20px;
+}
+
+.detail-skills h4 {
+    font-size: 14px;
+    color: #4fc3f7;
+    margin-bottom: 10px;
+}
+
+.detail-skills ul {
+    list-style: none;
+    padding: 0;
+}
+
+.detail-skills li {
+    font-size: 12px;
+    margin-bottom: 5px;
+    padding-left: 10px;
+    border-left: 2px solid #4fc3f7;
+}
+
+.detail-desc {
+    font-size: 12px;
+    color: #b0b0b0;
+    line-height: 1.5;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #b0b0b0;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: white;
 }

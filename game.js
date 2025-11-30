@@ -10,6 +10,7 @@ class Game {
         this.player = null;
         this.combat = null;
         this.scoreManager = null;
+        this.monsterDex = new MonsterDex(); // 図鑑システム初期化
         this.gameOver = false;
         this.currentFloor = 1; // 現在のフロア（B1F = 1, B2F = 2...）
 
@@ -25,6 +26,8 @@ class Game {
                 this.addMessage('モンスターデータの読み込みに失敗しました。');
                 return;
             }
+            // 図鑑にモンスターデータをセット
+            this.monsterDex.setMonsterData(MONSTER_TYPES);
         }
         // フロアをリセット（再スタート時のみ）
         if (!keepFloor) {

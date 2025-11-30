@@ -5,6 +5,16 @@ class UI {
         this.messageLog = [];
         this.maxMessages = 8;
         this.isInventoryOpen = true;
+
+        // 図鑑ボタンのイベントリスナー
+        const dexBtn = document.getElementById('dex-btn');
+        if (dexBtn) {
+            dexBtn.addEventListener('click', () => {
+                if (window.game && window.game.monsterDex) {
+                    this.showMonsterDex(window.game.monsterDex);
+                }
+            });
+        }
     }
 
     addMessage(text) {
@@ -276,6 +286,205 @@ class UI {
         const gameOverElement = document.getElementById('game-over');
         if (gameOverElement) {
             gameOverElement.style.display = 'none';
+        }
+    }
+
+    showPartySwapModal(player, newMonster, callback) {
+        // モーダルを作成
+        const modal = document.createElement('div');
+        modal.id = 'party-swap-modal';
+        modal.className = 'modal-overlay';
+
+        modal.innerHTML = `
+            <div class="modal-content party-swap-content">
+                <div class="modal-header">
+                    <h2>🎒 パーティーが満員です</h2>
+                    <p>どのモンスターを手放しますか？</p>
+                </div>
+                <div class="modal-body">
+                    <div class="new-monster-section">
+                        <h3>🆕 捕獲したモンスター</h3>
+                        <div class="swap-card new-monster" data-index="-1">
+                            <div class="monster-emoji">${newMonster.emoji}</div>
+                            <div class="monster-info">
+                                <div class="monster-name">${newMonster.name}</div>
+                                <div class="monster-level">Lv.${newMonster.level}</div>
+                                <div class="monster-stats-compact">
+                                    HP: ${newMonster.hp}/${newMonster.maxHp} | 
+                                    ATK: ${newMonster.atk} | 
+                                    DEF: ${newMonster.def} | 
+                                    SPD: ${newMonster.speed}
+                                </div>
+                            </div>
+                            <button class="release-btn" data-index="-1">手放す</button>
+                        </div>
+                    </div>
+                    <div class="party-section">
+                        <h3>👥 現在のパーティー</h3>
+                        <div class="party-swap-grid">
+                            ${player.party.map((monster, index) => `
+                                <div class="swap-card ${player.activeMonsterIndex === index ? 'active' : ''}" data-index="${index}">
+                                    <div class="monster-emoji">${monster.emoji}</div>
+                                    <div class="monster-info">
+                                        <div class="monster-name">${monster.name}</div>
+                                        <div class="monster-level">Lv.${monster.level}</div>
+                                        <div class="monster-stats-compact">
+                                            HP: ${monster.hp}/${monster.maxHp} | 
+                                            ATK: ${monster.atk} | 
+                                            DEF: ${monster.def} | 
+                                            SPD: ${monster.speed}
+                                        </div>
+                                    </div>
+                                    <button class="release-btn" data-index="${index}">手放す</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // ボタンのイベントリスナーを設定
+        const releaseButtons = modal.querySelectorAll('.release-btn');
+        releaseButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedIndex = parseInt(btn.getAttribute('data-index'));
+                modal.remove();
+                callback(selectedIndex);
+            });
+        });
+    }
+
+    showMonsterDex(dex) {
+        const modal = document.createElement('div');
+        modal.id = 'monster-dex-modal';
+        modal.className = 'modal-overlay';
+
+        const progress = dex.getProgress();
+        const monsters = dex.monsterData;
+
+        let gridHtml = '';
+        for (const [id, data] of Object.entries(monsters)) {
+            const isSeen = dex.isSeen(id);
+            const isCaptured = dex.isCaptured(id);
+
+            let cardClass = 'dex-card';
+            let content = '';
+
+            if (isCaptured) {
+                cardClass += ' captured';
+                content = `
+                    <div class="dex-emoji">${data.emoji}</div>
+                    <div class="dex-name">${data.name}</div>
+                    <div class="dex-rarity ${data.rarity}">${data.rarity.toUpperCase()}</div>
+                `;
+            } else if (isSeen) {
+                cardClass += ' seen';
+                content = `
+                    <div class="dex-emoji grayscale">${data.emoji}</div>
+                    <div class="dex-name">${data.name}</div>
+                    <div class="dex-status">未捕獲</div>
+                `;
+            } else {
+                cardClass += ' unknown';
+                content = `
+                    <div class="dex-emoji">❓</div>
+                    <div class="dex-name">???</div>
+                `;
+            }
+
+            gridHtml += `
+                <div class="${cardClass}" onclick="window.game.ui.showMonsterDetail('${id}')">
+                    ${content}
+                </div>
+            `;
+        }
+
+        modal.innerHTML = `
+            <div class="modal-content dex-content">
+                <div class="modal-header">
+                    <h2>📖 モンスター図鑑</h2>
+                    <div class="dex-stats">
+                        <span>遭遇: ${progress.seen}/${progress.total} (${progress.seenPercent}%)</span>
+                        <span>捕獲: ${progress.captured}/${progress.total} (${progress.capturedPercent}%)</span>
+                    </div>
+                    <button class="close-btn" onclick="document.getElementById('monster-dex-modal').remove()">×</button>
+                </div>
+                <div class="dex-container">
+                    <div class="dex-grid">
+                        ${gridHtml}
+                    </div>
+                    <div id="dex-detail-view" class="dex-detail-view">
+                        <div class="detail-placeholder">
+                            モンスターを選択して詳細を表示
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+    }
+
+    showMonsterDetail(monsterId) {
+        const dex = window.game.monsterDex;
+        // 未遭遇の場合は詳細を表示しない（念のため）
+        if (!dex.isSeen(monsterId) && !dex.isCaptured(monsterId)) return;
+
+        const data = dex.monsterData[monsterId];
+        const isCaptured = dex.isCaptured(monsterId);
+        const detailView = document.getElementById('dex-detail-view');
+
+        if (!detailView) return;
+
+        // 選択状態の更新
+        const cards = document.querySelectorAll('.dex-card');
+        cards.forEach(card => card.classList.remove('selected'));
+        // クリックされたカードを特定するのは難しいので、ここでは省略するか、
+        // onclickでthisを渡すように変更する必要があるが、とりあえず詳細表示に集中。
+
+        if (isCaptured) {
+            detailView.innerHTML = `
+                <div class="detail-header">
+                    <div class="detail-emoji">${data.emoji}</div>
+                    <div class="detail-info">
+                        <h3>${data.name}</h3>
+                        <span class="rarity-badge ${data.rarity}">${data.rarity}</span>
+                    </div>
+                </div>
+                <div class="detail-stats">
+                    <div class="stat-row"><span>HP:</span> <span>${data.baseStats.hp}</span></div>
+                    <div class="stat-row"><span>攻撃:</span> <span>${data.baseStats.atk}</span></div>
+                    <div class="stat-row"><span>防御:</span> <span>${data.baseStats.def}</span></div>
+                    <div class="stat-row"><span>素早さ:</span> <span>${data.baseStats.speed}</span></div>
+                </div>
+                <div class="detail-skills">
+                    <h4>スキル</h4>
+                    <ul>
+                        ${data.skills.map(s => `<li><strong>${s.name}</strong>: ${s.description}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="detail-desc">
+                    <p>捕獲率: ${Math.floor(data.captureRate * 100)}%</p>
+                    <p>経験値: ${data.expYield}</p>
+                </div>
+            `;
+        } else {
+            detailView.innerHTML = `
+                <div class="detail-header">
+                    <div class="detail-emoji grayscale">${data.emoji}</div>
+                    <div class="detail-info">
+                        <h3>${data.name}</h3>
+                        <span class="rarity-badge unknown">???</span>
+                    </div>
+                </div>
+                <div class="detail-message">
+                    <p>まだ捕獲していません。</p>
+                    <p>捕獲すると詳細情報が表示されます。</p>
+                </div>
+            `;
         }
     }
 }

@@ -38,6 +38,11 @@ class Combat {
             // プレイヤー先攻の場合もUIを更新
             this.game.render();
         }
+
+        // 図鑑に遭遇を登録
+        if (this.game.monsterDex) {
+            this.game.monsterDex.registerSeen(this.enemy.type);
+        }
     }
 
     playerAttack(skillIndex = 0) {
@@ -101,14 +106,42 @@ class Combat {
         // スコア加算
         this.game.scoreManager.addCaptureScore(this.enemy);
 
-        if (this.player.addMonster(this.enemy)) {
-            this.game.addMessage(`${this.enemy.name} がパーティに加わった！`);
-            this.game.dungeon.removeMonster(this.enemy);
-        } else {
-            this.game.addMessage('パーティが満員のため、逃がした。');
+        // 図鑑に捕獲を登録
+        if (this.game.monsterDex) {
+            this.game.monsterDex.registerCaptured(this.enemy.type);
         }
 
-        this.end(true);
+        // パーティーが満杯かチェック
+        if (this.player.party.length >= 3) {
+            // 入れ替え選択UIを表示
+            this.game.ui.showPartySwapModal(this.player, this.enemy, (selectedIndex) => {
+                if (selectedIndex === -1) {
+                    // 新しいモンスターを手放す
+                    this.game.addMessage(`${this.enemy.name} を逃がした。`);
+                } else {
+                    // パーティーのモンスターを手放して新しいモンスターを追加
+                    const releasedMonster = this.player.party[selectedIndex];
+                    this.game.addMessage(`${releasedMonster.name} を逃がした。`);
+                    this.player.party[selectedIndex] = this.enemy;
+                    this.enemy.isWild = false;
+                    this.game.addMessage(`${this.enemy.name} がパーティに加わった！`);
+
+                    // activeMonsterIndex の調整
+                    if (this.player.activeMonsterIndex === selectedIndex) {
+                        this.player.activeMonsterIndex = selectedIndex;
+                    }
+                }
+                this.game.dungeon.removeMonster(this.enemy);
+                this.end(true);
+            });
+        } else {
+            // パーティーに空きがある場合は通常通り追加
+            if (this.player.addMonster(this.enemy)) {
+                this.game.addMessage(`${this.enemy.name} がパーティに加わった！`);
+                this.game.dungeon.removeMonster(this.enemy);
+            }
+            this.end(true);
+        }
     }
 
     enemyAction() {

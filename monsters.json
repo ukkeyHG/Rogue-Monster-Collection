@@ -89,35 +89,95 @@
         "expYield": 18,
         "rarity": "common"
     },
-    "dragon": {
-        "name": "ドラゴン",
-        "emoji": "🐉",
+    "mushroom": {
+        "name": "キノコモンスター",
+        "emoji": "🍄",
         "baseStats": {
-            "hp": 60,
-            "maxHp": 60,
-            "atk": 12,
-            "def": 8,
+            "hp": 35,
+            "maxHp": 35,
+            "atk": 4,
+            "def": 6,
+            "speed": 2
+        },
+        "skills": [
+            {
+                "name": "胞子散布",
+                "power": 1.0,
+                "description": "通常の攻撃",
+                "accuracy": 0.95,
+                "criticalRate": 0.05
+            },
+            {
+                "name": "毒の粉",
+                "power": 1.4,
+                "description": "毒の粉を撒く",
+                "accuracy": 0.85,
+                "criticalRate": 0.08
+            }
+        ],
+        "captureRate": 0.38,
+        "expYield": 20,
+        "rarity": "common"
+    },
+    "rat": {
+        "name": "ラット",
+        "emoji": "🐀",
+        "baseStats": {
+            "hp": 28,
+            "maxHp": 28,
+            "atk": 7,
+            "def": 3,
+            "speed": 7
+        },
+        "skills": [
+            {
+                "name": "引っかく",
+                "power": 1.0,
+                "description": "通常の攻撃",
+                "accuracy": 0.95,
+                "criticalRate": 0.05
+            },
+            {
+                "name": "素早い連撃",
+                "power": 1.2,
+                "description": "素早く2回攻撃",
+                "accuracy": 0.90,
+                "criticalRate": 0.12
+            }
+        ],
+        "captureRate": 0.42,
+        "expYield": 16,
+        "rarity": "common"
+    },
+    "snake": {
+        "name": "スネーク",
+        "emoji": "🐍",
+        "baseStats": {
+            "hp": 32,
+            "maxHp": 32,
+            "atk": 9,
+            "def": 4,
             "speed": 6
         },
         "skills": [
             {
-                "name": "爪攻撃",
+                "name": "噛みつく",
                 "power": 1.0,
                 "description": "通常の攻撃",
-                "accuracy": 0.90,
-                "criticalRate": 0.10
+                "accuracy": 0.95,
+                "criticalRate": 0.05
             },
             {
-                "name": "火炎ブレス",
-                "power": 2.5,
-                "description": "強力な炎の攻撃",
-                "accuracy": 0.75,
-                "criticalRate": 0.20
+                "name": "毒牙",
+                "power": 1.7,
+                "description": "毒を含んだ牙で攻撃",
+                "accuracy": 0.80,
+                "criticalRate": 0.15
             }
         ],
-        "captureRate": 0.15,
-        "expYield": 50,
-        "rarity": "rare"
+        "captureRate": 0.32,
+        "expYield": 22,
+        "rarity": "common"
     },
     "ghost": {
         "name": "ゴースト",
@@ -178,5 +238,125 @@
         "captureRate": 0.28,
         "expYield": 35,
         "rarity": "uncommon"
+    },
+    "orc": {
+        "name": "オーク",
+        "emoji": "👹",
+        "baseStats": {
+            "hp": 50,
+            "maxHp": 50,
+            "atk": 11,
+            "def": 7,
+            "speed": 4
+        },
+        "skills": [
+            {
+                "name": "斧を振る",
+                "power": 1.0,
+                "description": "通常の攻撃",
+                "accuracy": 0.95,
+                "criticalRate": 0.05
+            },
+            {
+                "name": "バーサーク",
+                "power": 2.2,
+                "description": "怒りの一撃",
+                "accuracy": 0.75,
+                "criticalRate": 0.20
+            }
+        ],
+        "captureRate": 0.22,
+        "expYield": 38,
+        "rarity": "uncommon"
+    },
+    "lizardman": {
+        "name": "リザードマン",
+        "emoji": "🦎",
+        "baseStats": {
+            "hp": 48,
+            "maxHp": 48,
+            "atk": 9,
+            "def": 8,
+            "speed": 5
+        },
+        "skills": [
+            {
+                "name": "槍突き",
+                "power": 1.0,
+                "description": "通常の攻撃",
+                "accuracy": 0.95,
+                "criticalRate": 0.05
+            },
+            {
+                "name": "尾撃",
+                "power": 1.9,
+                "description": "強靭な尾で攻撃",
+                "accuracy": 0.85,
+                "criticalRate": 0.12
+            }
+        ],
+        "captureRate": 0.24,
+        "expYield": 32,
+        "rarity": "uncommon"
+    },
+    "dragon": {
+        "name": "ドラゴン",
+        "emoji": "🐉",
+        "baseStats": {
+            "hp": 60,
+            "maxHp": 60,
+            "atk": 12,
+            "def": 8,
+            "speed": 6
+        },
+        "skills": [
+            {
+                "name": "爪攻撃",
+                "power": 1.0,
+                "description": "通常の攻撃",
+                "accuracy": 0.90,
+                "criticalRate": 0.10
+            },
+            {
+                "name": "火炎ブレス",
+                "power": 2.5,
+                "description": "強力な炎の攻撃",
+                "accuracy": 0.75,
+                "criticalRate": 0.20
+            }
+        ],
+        "captureRate": 0.15,
+        "expYield": 50,
+        "rarity": "rare"
+    },
+    "phoenix": {
+        "name": "フェニックス",
+        "emoji": "🔥",
+        "baseStats": {
+            "hp": 55,
+            "maxHp": 55,
+            "atk": 13,
+            "def": 9,
+            "speed": 10
+        },
+        "skills": [
+            {
+                "name": "炎の爪",
+                "power": 1.0,
+                "description": "通常の攻撃",
+                "accuracy": 0.90,
+                "criticalRate": 0.10
+            },
+            {
+                "name": "復活の炎",
+                "power": 2.8,
+                "description": "不死鳥の炎で攻撃",
+                "accuracy": 0.70,
+                "criticalRate": 0.25
+            }
+        ],
+        "captureRate": 0.12,
+        "expYield": 60,
+        "rarity": "rare"
     }
 }
