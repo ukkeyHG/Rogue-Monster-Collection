@@ -45,7 +45,7 @@ class UI {
         if (!statsElement) return;
 
         const floor = window.game ? window.game.currentFloor : 1;
-        let html = `<h3>👤 プレイヤー (B${floor}F)</h3>`;
+        let html = `<h3>👤 プレイヤー</h3>`;
         html += `<div class="stats-inline">`;
         html += `<span>🎯 ${player.turnsPlayed}</span>`;
         html += `<span>⚔️ ${player.monstersDefeated}</span>`;

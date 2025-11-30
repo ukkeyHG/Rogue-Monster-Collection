@@ -99,6 +99,18 @@ class Renderer {
         const playerScreenX = player.x - cameraX;
         const playerScreenY = player.y - cameraY;
         this.drawPlayer(playerScreenX, playerScreenY, player, currentTileSize);
+
+        // 階数表示（左上）
+        this.ctx.save();
+        this.ctx.font = 'bold 24px sans-serif';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'top';
+        this.ctx.fillStyle = '#FFD700'; // ゴールド色
+        this.ctx.strokeStyle = '#000000';
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeText(`B${game.currentFloor}F`, 10, 10);
+        this.ctx.fillText(`B${game.currentFloor}F`, 10, 10);
+        this.ctx.restore();
     }
 
     drawTile(x, y, tile, tileSize) {
@@ -238,5 +250,39 @@ class Renderer {
             px + tileSize / 2,
             py + tileSize / 2
         );
+    }
+
+    // フェードアウトエフェクト
+    async fadeOut(duration = 300) {
+        return new Promise(resolve => {
+            let opacity = 1;
+            const step = 1 / (duration / 16);
+            const interval = setInterval(() => {
+                opacity -= step;
+                if (opacity <= 0) {
+                    this.canvas.style.opacity = 0;
+                    clearInterval(interval);
+                    resolve();
+                }
+                this.canvas.style.opacity = opacity;
+            }, 16);
+        });
+    }
+
+    // フェードインエフェクト
+    async fadeIn(duration = 300) {
+        return new Promise(resolve => {
+            let opacity = 0;
+            const step = 1 / (duration / 16);
+            const interval = setInterval(() => {
+                opacity += step;
+                if (opacity >= 1) {
+                    this.canvas.style.opacity = 1;
+                    clearInterval(interval);
+                    resolve();
+                }
+                this.canvas.style.opacity = opacity;
+            }, 16);
+        });
     }
 }

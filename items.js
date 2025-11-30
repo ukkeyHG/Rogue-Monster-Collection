@@ -93,7 +93,12 @@ class Item {
 
         const monster = player.party[targetMonsterIndex];
         if (!monster || monster.isDead()) {
-            return false;
+            return { success: false, message: '使用できません' };
+        }
+
+        // HP満タンなら使用しない
+        if (monster.hp >= monster.maxHp) {
+            return { success: false, message: `${monster.name} のHPは満タンです` };
         }
 
         const healed = Math.min(this.data.value, monster.maxHp - monster.hp);
@@ -113,7 +118,12 @@ class Item {
 
         const monster = player.party[targetMonsterIndex];
         if (!monster || monster.isDead()) {
-            return false;
+            return { success: false, message: '使用できません' };
+        }
+
+        // HP満タンなら使用しない
+        if (monster.hp >= monster.maxHp) {
+            return { success: false, message: `${monster.name} のHPは満タンです` };
         }
 
         const healed = monster.maxHp - monster.hp;

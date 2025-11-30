@@ -137,7 +137,7 @@ class Game {
         const moved = this.player.move(dx, dy, this.dungeon);
 
         if (moved) {
-            console.log(`Player moved to ${this.player.x}, ${this.player.y}`);
+            // console.log(`Player moved to ${this.player.x}, ${this.player.y}`);
 
             // 宝箱チェック
             const treasure = this.dungeon.getTreasureAt(this.player.x, this.player.y);
@@ -152,7 +152,7 @@ class Game {
 
             // モンスター遭遇チェック
             const monster = this.dungeon.getMonsterAt(this.player.x, this.player.y);
-            console.log(`Monster check at ${this.player.x}, ${this.player.y}:`, monster);
+            // console.log(`Monster check at ${this.player.x}, ${this.player.y}:`, monster);
 
             if (monster) {
                 console.log("Starting combat with:", monster);
@@ -171,7 +171,10 @@ class Game {
         return moved;
     }
 
-    descendFloor() {
+    async descendFloor() {
+        // フェードアウトエフェクト
+        await this.renderer.fadeOut(300);
+
         // 次のフロアへ
         this.currentFloor++;
 
@@ -183,6 +186,9 @@ class Game {
 
         // 新しいダンジョンを生成
         this.init(true); // keepFloor = true
+
+        // フェードインエフェクト
+        await this.renderer.fadeIn(300);
     }
 
     useItemFromInventory(index, targetIndex = null) {
