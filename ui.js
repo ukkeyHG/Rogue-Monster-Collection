@@ -133,6 +133,21 @@ class UI {
         const inventoryElement = document.getElementById('inventory-panel');
         if (!inventoryElement) return;
 
+        // アイテムをグループ化
+        const itemGroups = {};
+        player.inventory.forEach((item, index) => {
+            const itemName = item.data.name;
+            if (!itemGroups[itemName]) {
+                itemGroups[itemName] = {
+                    data: item.data,
+                    indices: [],
+                    count: 0
+                };
+            }
+            itemGroups[itemName].indices.push(index);
+            itemGroups[itemName].count++;
+        });
+
         const count = player.inventory.length;
         const arrow = this.isInventoryOpen ? '▼' : '▶';
 
@@ -145,17 +160,23 @@ class UI {
             if (player.inventory.length === 0) {
                 html += '<p class="empty-message">アイテムがありません</p>';
             } else {
-                for (let i = 0; i < player.inventory.length; i++) {
-                    const item = player.inventory[i];
+                // グループ化されたアイテムを表示
+                for (const [itemName, group] of Object.entries(itemGroups)) {
+                    const firstIndex = group.indices[0];
                     html += `<div class="item-slot">`;
-                    html += `<span class="item-emoji">${item.data.emoji}</span>`;
+                    html += `<span class="item-emoji">${group.data.emoji}</span>`;
                     html += `<div class="item-details">`;
-                    html += `<span class="item-name">${item.data.name}</span>`;
-                    html += `<span class="item-desc">${item.data.description}</span>`;
+                    // アイテム名と個数を同じ行に表示（個数は1より大きい場合のみ）
+                    html += `<span class="item-name">${group.data.name}`;
+                    if (group.count > 1) {
+                        html += ` <span style="color: #4fc3f7; font-size: 12px;">x ${group.count}</span>`;
+                    }
+                    html += `</span>`;
+                    html += `<span class="item-desc">${group.data.description}</span>`;
                     html += `</div>`;
 
                     // ターゲット選択ドロップダウン
-                    html += `<select class="item-target-select" id="target-${i}">`;
+                    html += `<select class="item-target-select" id="target-${itemName}">`;
                     for (let j = 0; j < player.party.length; j++) {
                         const mon = player.party[j];
                         const selected = j === player.activeMonsterIndex ? ' selected' : '';
@@ -163,7 +184,7 @@ class UI {
                     }
                     html += `</select>`;
 
-                    html += `<button class="item-use-btn" onclick="game.useItemFromInventory(${i}, document.getElementById('target-${i}').value)">使う</button>`;
+                    html += `<button class="item-use-btn" onclick="game.useItemByName('${itemName}', document.getElementById('target-${itemName}').value)">使う</button>`;
                     html += `</div>`;
                 }
             }

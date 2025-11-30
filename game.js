@@ -215,6 +215,25 @@ class Game {
         }
     }
 
+    // アイテム名から最初に見つかったアイテムを使用（グループ化UI用）
+    useItemByName(itemName, targetIndex = null) {
+        if (this.combat && this.combat.isActive) {
+            this.addMessage('戦闘中はインベントリから直接使えません！');
+            return;
+        }
+
+        // アイテム名が一致する最初のアイテムを探す
+        const index = this.player.inventory.findIndex(item => item.data.name === itemName);
+        if (index === -1) {
+            this.addMessage('アイテムが見つかりませんでした');
+            return;
+        }
+
+        // 既存のuseItemFromInventoryを呼び出す
+        this.useItemFromInventory(index, targetIndex);
+    }
+
+
     switchMonster(index) {
         if (this.combat && this.combat.isActive) return;
 
