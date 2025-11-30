@@ -780,6 +780,13 @@ body {
     height: 80vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+    background: rgba(30, 30, 50, 0.95);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(79, 195, 247, 0.3);
+    animation: slideUp 0.3s ease;
 }
 
 .dex-stats {
@@ -1003,8 +1010,8 @@ body {
 
 .close-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 30px;
+    right: 30px;
     background: none;
     border: none;
     color: #b0b0b0;
