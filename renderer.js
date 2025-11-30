@@ -147,11 +147,15 @@ class Renderer {
 
         this.ctx.save();
         this.ctx.beginPath();
-        this.ctx.arc(centerX, centerY, tileSize / 2 - 2, 0, Math.PI * 2);
-        this.ctx.fillStyle = 'rgba(255, 215, 0, 0.4)'; // 半透明の黄色
+
+        // 固定サイズのハイライト (1.5倍)
+        const radius = tileSize * 0.75;
+
+        this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        this.ctx.fillStyle = 'rgba(255, 215, 0, 0.4)';
         this.ctx.fill();
-        this.ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
-        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = 'rgba(255, 230, 0, 0.92)';
+        this.ctx.lineWidth = 1;
         this.ctx.stroke();
         this.ctx.restore();
 
@@ -166,9 +170,7 @@ class Renderer {
                 py + tileSize / 2
             );
 
-            // プレイヤーインジケーター
-            this.ctx.fillStyle = this.colors.player;
-            this.ctx.fillRect(px + 2, py + 2, 4, 4);
+
         } else {
             // モンスターがいない場合
             this.ctx.fillStyle = this.colors.player;

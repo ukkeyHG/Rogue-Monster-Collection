@@ -251,9 +251,7 @@ class UI {
                         <span>✨ ボーナス:</span>
                         <span>${scoreManager.breakdown.bonus.toLocaleString()}</span>
                     </div>
-                </div>
-                <div class="max-damage-info">
-                    (最大ダメージ: ${scoreManager.maxDamage})
+                    </div>
                 </div>
             </div>
         `;

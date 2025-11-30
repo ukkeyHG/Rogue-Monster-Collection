@@ -52,7 +52,18 @@ class Combat {
 
         const result = playerMonster.useSkill(skillIndex, this.enemy);
         this.game.addMessage(`${playerMonster.name} の ${result.skill.name}！`);
-        this.game.addMessage(`${this.enemy.name} に ${result.actualDamage} のダメージ！`);
+
+        if (result.success) {
+            if (result.isCritical) {
+                this.game.addMessage('会心の一撃！！！');
+            }
+            this.game.addMessage(`${this.enemy.name} に ${result.actualDamage} のダメージ！`);
+
+            // 最大ダメージを記録
+            this.game.scoreManager.recordDamage(result.actualDamage);
+        } else {
+            this.game.addMessage('攻撃が外れた！');
+        }
 
         // 攻撃後にUIを更新
         this.game.render();
@@ -104,10 +115,18 @@ class Combat {
         if (!this.isActive || this.turn !== 'enemy') return;
 
         const playerMonster = this.player.activeMonster;
-        const damage = this.enemy.attack(playerMonster);
+        const result = this.enemy.useSkill(0, playerMonster);
 
         this.game.addMessage(`${this.enemy.name} の攻撃！`);
-        this.game.addMessage(`${playerMonster.name} に ${damage} のダメージ！`);
+
+        if (result.success) {
+            if (result.isCritical) {
+                this.game.addMessage('痛恨の一撃！！！');
+            }
+            this.game.addMessage(`${playerMonster.name} に ${result.actualDamage} のダメージ！`);
+        } else {
+            this.game.addMessage('攻撃は外れた！');
+        }
 
         // 攻撃後にUIを更新
         this.game.render();

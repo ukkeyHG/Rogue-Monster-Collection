@@ -110,13 +110,36 @@ class Monster extends Entity {
         }
 
         const skill = this.skills[skillIndex];
-        const baseDamage = this.atk * skill.power;
+
+        // 命中判定
+        const accuracy = skill.accuracy !== undefined ? skill.accuracy : 0.95;
+        if (Math.random() > accuracy) {
+            return {
+                skill: skill,
+                success: false,
+                damage: 0,
+                isCritical: false
+            };
+        }
+
+        // クリティカル判定
+        const criticalRate = skill.criticalRate !== undefined ? skill.criticalRate : 0.05;
+        const isCritical = Math.random() < criticalRate;
+
+        // ダメージ計算
+        let baseDamage = this.atk * skill.power;
+        if (isCritical) {
+            baseDamage *= 1.5; // クリティカル時は1.5倍
+        }
+
         const variance = 0.85 + Math.random() * 0.3; // 85%～115%の振れ幅
         const damage = Math.floor(baseDamage * variance);
 
         return {
             skill: skill,
+            success: true,
             damage: damage,
+            isCritical: isCritical,
             actualDamage: target.takeDamage(damage)
         };
     }

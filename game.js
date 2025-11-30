@@ -17,7 +17,15 @@ class Game {
         this.setupControls();
     }
 
-    init(keepFloor = false) {
+    async init(keepFloor = false) {
+        // モンスターデータの読み込み待機
+        if (!keepFloor) {
+            const loaded = await loadMonsterData();
+            if (!loaded) {
+                this.addMessage('モンスターデータの読み込みに失敗しました。');
+                return;
+            }
+        }
         // フロアをリセット（再スタート時のみ）
         if (!keepFloor) {
             this.currentFloor = 1;
