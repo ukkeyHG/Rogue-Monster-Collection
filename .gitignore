@@ -51,3 +51,6 @@ jspm_packages/
 # Parcel-bundler cache (if used)
 .cache
 dist/
+
+# Ranking System Data
+data/*.json
