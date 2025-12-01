@@ -301,6 +301,13 @@ class UI {
         content.insertBefore(tempDiv.firstElementChild, restartBtn);
 
         gameOverElement.style.display = 'flex';
+
+        // スコア登録ダイアログを表示（1秒後）
+        setTimeout(() => {
+            if (typeof showScoreSubmitDialog === 'function') {
+                showScoreSubmitDialog(scoreManager.totalScore);
+            }
+        }, 1000);
     }
 
     hideGameOver() {
