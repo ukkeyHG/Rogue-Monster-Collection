@@ -21,9 +21,15 @@ class Game {
     async init(keepFloor = false) {
         // モンスターデータの読み込み待機
         if (!keepFloor) {
-            const loaded = await loadMonsterData();
-            if (!loaded) {
-                this.addMessage('モンスターデータの読み込みに失敗しました。');
+            // モンスターデータとアイテムデータを並行して読み込む
+            const [monsterLoaded, itemLoaded] = await Promise.all([
+                loadMonsterData(),
+                loadItemData()
+            ]);
+
+            if (!monsterLoaded || !itemLoaded) {
+                this.addMessage('データの読み込みに失敗しました。');
+                console.error('Data load failed:', { monsterLoaded, itemLoaded });
                 return;
             }
             // 図鑑にモンスターデータをセット
