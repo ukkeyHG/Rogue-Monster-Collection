@@ -1,0 +1,76 @@
+{
+  "items": {
+    "herb": {
+      "name": "薬草",
+      "emoji": "🌿",
+      "description": "HP 30回復",
+      "rarity": "common",
+      "category": "recovery",
+      "effect": {
+        "type": "heal",
+        "target": "single",
+        "value": 30,
+        "unit": "fixed"
+      }
+    },
+    "potion": {
+      "name": "ポーション",
+      "emoji": "⚗️",
+      "description": "HP 50回復",
+      "rarity": "common",
+      "category": "recovery",
+      "effect": {
+        "type": "heal",
+        "target": "single",
+        "value": 50,
+        "unit": "fixed"
+      }
+    },
+    "hiPotion": {
+      "name": "高級ポーション",
+      "emoji": "✨",
+      "description": "HP全回復",
+      "rarity": "uncommon",
+      "category": "recovery",
+      "effect": {
+        "type": "heal",
+        "target": "single",
+        "value": 100,
+        "unit": "percent"
+      }
+    },
+    "elixir": {
+      "name": "エリクサー",
+      "emoji": "💎",
+      "description": "パーティ全員HP全回復",
+      "rarity": "rare",
+      "category": "recovery",
+      "effect": {
+        "type": "heal",
+        "target": "all",
+        "value": 100,
+        "unit": "percent"
+      }
+    },
+    "reviveSeed": {
+      "name": "復活の種",
+      "emoji": "🌱",
+      "description": "倒れたモンスターを50%HPで復活",
+      "rarity": "uncommon",
+      "category": "revive",
+      "effect": {
+        "type": "revive",
+        "target": "single",
+        "value": 50,
+        "unit": "percent"
+      }
+    }
+  },
+  "lootTable": [
+    { "item": "herb", "weight": 40 },
+    { "item": "potion", "weight": 30 },
+    { "item": "hiPotion", "weight": 15 },
+    { "item": "elixir", "weight": 5 },
+    { "item": "reviveSeed", "weight": 10 }
+  ]
+}

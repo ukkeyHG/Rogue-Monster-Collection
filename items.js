@@ -1,60 +1,35 @@
 // アイテムシステム
 
-// アイテムタイプ定義
-const ITEM_TYPES = {
-    herb: {
-        name: '薬草',
-        emoji: '🌿',
-        effect: 'heal',
-        value: 30,
-        rarity: 'common',
-        description: 'HP 30回復'
-    },
-    potion: {
-        name: 'ポーション',
-        emoji: '⚗️',
-        effect: 'heal',
-        value: 50,
-        rarity: 'common',
-        description: 'HP 50回復'
-    },
-    hiPotion: {
-        name: '高級ポーション',
-        emoji: '✨',
-        effect: 'healFull',
-        rarity: 'uncommon',
-        description: 'HP全回復'
-    },
-    elixir: {
-        name: 'エリクサー',
-        emoji: '💎',
-        effect: 'healAllParty',
-        rarity: 'rare',
-        description: 'パーティ全員HP全回復'
-    },
-    reviveSeed: {
-        name: '復活の種',
-        emoji: '🌱',
-        effect: 'revive',
-        rarity: 'uncommon',
-        description: '倒れたモンスターを50%HPで復活'
-    }
-};
+// アイテムデータ（JSONから読み込む）
+let ITEM_TYPES = {};
+let LOOT_TABLE = [];
 
-// ルートテーブル（宝箱の中身）
-const LOOT_TABLE = [
-    { item: 'herb', weight: 40 },
-    { item: 'potion', weight: 30 },
-    { item: 'hiPotion', weight: 15 },
-    { item: 'elixir', weight: 5 },
-    { item: 'reviveSeed', weight: 10 }
-];
+// アイテムデータの読み込み
+async function loadItemData() {
+    try {
+        const response = await fetch('items.json');
+        const data = await response.json();
+        ITEM_TYPES = data.items;
+        LOOT_TABLE = data.lootTable;
+        console.log('Item data loaded:', ITEM_TYPES);
+        return true;
+    } catch (error) {
+        console.error('Failed to load item data:', error);
+        return false;
+    }
+}
 
 // アイテムクラス
 class Item {
     constructor(type) {
         this.type = type;
-        this.data = ITEM_TYPES[type];
+        // データがまだ読み込まれていない場合のフォールバック
+        this.data = ITEM_TYPES[type] || {
+            name: 'Unknown Item',
+            emoji: '❓',
+            description: 'データ読み込みエラー',
+            effect: { type: 'none' }
+        };
     }
 
     get name() {
@@ -71,21 +46,34 @@ class Item {
 
     // アイテムを使用（targetMonsterIndexはオプション）
     use(player, targetMonsterIndex = null) {
-        switch (this.data.effect) {
+        const effect = this.data.effect;
+        
+        if (!effect) return false;
+
+        switch (effect.type) {
             case 'heal':
-                return this.useHeal(player, targetMonsterIndex);
-            case 'healFull':
-                return this.useHealFull(player, targetMonsterIndex);
-            case 'healAllParty':
-                return this.useHealAllParty(player);
+                if (effect.target === 'all') {
+                    return this.useHealAllParty(player, effect);
+                } else {
+                    return this.useHeal(player, targetMonsterIndex, effect);
+                }
             case 'revive':
-                return this.useRevive(player, targetMonsterIndex);
+                return this.useRevive(player, targetMonsterIndex, effect);
             default:
                 return false;
         }
     }
 
-    useHeal(player, targetMonsterIndex) {
+    // 回復量の計算
+    calculateValue(baseValue, unit, maxHp) {
+        if (unit === 'percent') {
+            return Math.floor(maxHp * (baseValue / 100));
+        } else {
+            return baseValue;
+        }
+    }
+
+    useHeal(player, targetMonsterIndex, effect) {
         if (targetMonsterIndex === null || targetMonsterIndex === undefined) {
             // アクティブモンスターに使用
             targetMonsterIndex = player.activeMonsterIndex;
@@ -101,49 +89,33 @@ class Item {
             return { success: false, message: `${monster.name} のHPは満タンです` };
         }
 
-        const healed = Math.min(this.data.value, monster.maxHp - monster.hp);
-        monster.heal(healed);
+        const healAmount = this.calculateValue(effect.value, effect.unit, monster.maxHp);
+        const actualHealed = Math.min(healAmount, monster.maxHp - monster.hp);
+        
+        monster.heal(actualHealed);
+
+        let message = `${monster.name} のHPが ${actualHealed} 回復した！`;
+        if (effect.unit === 'percent' && effect.value >= 100) {
+            message = `${monster.name} のHPが全回復した！`;
+        }
 
         return {
             success: true,
-            message: `${monster.name} のHPが ${healed} 回復した！`,
+            message: message,
             target: monster
         };
     }
 
-    useHealFull(player, targetMonsterIndex) {
-        if (targetMonsterIndex === null || targetMonsterIndex === undefined) {
-            targetMonsterIndex = player.activeMonsterIndex;
-        }
-
-        const monster = player.party[targetMonsterIndex];
-        if (!monster || monster.isDead()) {
-            return { success: false, message: '使用できません' };
-        }
-
-        // HP満タンなら使用しない
-        if (monster.hp >= monster.maxHp) {
-            return { success: false, message: `${monster.name} のHPは満タンです` };
-        }
-
-        const healed = monster.maxHp - monster.hp;
-        monster.heal(healed);
-
-        return {
-            success: true,
-            message: `${monster.name} のHPが全回復した！`,
-            target: monster
-        };
-    }
-
-    useHealAllParty(player) {
+    useHealAllParty(player, effect) {
         let healedCount = 0;
 
         for (const monster of player.party) {
             if (!monster.isDead()) {
-                const healed = monster.maxHp - monster.hp;
-                if (healed > 0) {
-                    monster.heal(healed);
+                const healAmount = this.calculateValue(effect.value, effect.unit, monster.maxHp);
+                const actualHealed = Math.min(healAmount, monster.maxHp - monster.hp);
+                
+                if (actualHealed > 0) {
+                    monster.heal(actualHealed);
                     healedCount++;
                 }
             }
@@ -153,14 +125,19 @@ class Item {
             return false;
         }
 
+        let message = `パーティ全員のHPが回復した！`;
+        if (effect.unit === 'percent' && effect.value >= 100) {
+            message = `パーティ全員のHPが全回復した！`;
+        }
+
         return {
             success: true,
-            message: `パーティ全員のHPが全回復した！`,
+            message: message,
             target: null
         };
     }
 
-    useRevive(player, targetMonsterIndex) {
+    useRevive(player, targetMonsterIndex, effect) {
         if (targetMonsterIndex === null || targetMonsterIndex === undefined) {
             // 最初の倒れているモンスターを探す
             for (let i = 0; i < player.party.length; i++) {
@@ -180,8 +157,8 @@ class Item {
             return false;
         }
 
-        // 最大HPの50%で復活
-        const reviveHp = Math.floor(monster.maxHp * 0.5);
+        // 復活時のHP計算
+        const reviveHp = this.calculateValue(effect.value, effect.unit, monster.maxHp);
         monster.hp = reviveHp;
 
         return {
@@ -194,6 +171,11 @@ class Item {
 
 // ルートテーブルからランダムにアイテムを取得
 function rollLoot() {
+    // データ未読み込み時のフォールバック
+    if (LOOT_TABLE.length === 0) {
+        return new Item('herb');
+    }
+
     const totalWeight = LOOT_TABLE.reduce((sum, entry) => sum + entry.weight, 0);
     let roll = Math.random() * totalWeight;
 
