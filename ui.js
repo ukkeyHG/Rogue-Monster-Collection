@@ -4,7 +4,7 @@ class UI {
     constructor() {
         this.messageLog = [];
         this.maxMessages = 8;
-        this.isInventoryOpen = true;
+        this.isInventoryOpen = false;
 
         // 図鑑ボタンのイベントリスナー
         const dexBtn = document.getElementById('dex-btn');
@@ -101,7 +101,10 @@ class UI {
                 html += `<div class="stat-label">HP</div>`;
                 html += `<div class="progress-bar">`;
                 const hpPercent = (monster.hp / monster.maxHp) * 100;
-                html += `<div class="progress-fill" style="width: ${hpPercent}%"></div>`;
+                let hpClass = 'high';
+                if (hpPercent < 25) hpClass = 'low';
+                else if (hpPercent < 50) hpClass = 'mid';
+                html += `<div class="progress-fill ${hpClass}" style="width: ${hpPercent}%"></div>`;
                 html += `</div>`;
                 html += `<div class="stat-value">${monster.hp}/${monster.maxHp}</div>`;
                 html += `</div>`;
@@ -216,7 +219,10 @@ class UI {
         html += `<div class="stat-label">HP</div>`;
         html += `<div class="progress-bar">`;
         const enemyHpPercent = (enemy.hp / enemy.maxHp) * 100;
-        html += `<div class="progress-fill enemy" style="width: ${enemyHpPercent}%"></div>`;
+        let enemyHpClass = 'high';
+        if (enemyHpPercent < 25) enemyHpClass = 'low';
+        else if (enemyHpPercent < 50) enemyHpClass = 'mid';
+        html += `<div class="progress-fill enemy ${enemyHpClass}" style="width: ${enemyHpPercent}%"></div>`;
         html += `</div>`;
         html += `<div class="stat-value">${enemy.hp}/${enemy.maxHp}</div>`;
         html += `</div>`;
@@ -229,7 +235,10 @@ class UI {
         html += `<div class="stat-label">HP</div>`;
         html += `<div class="progress-bar">`;
         const allyHpPercent = (playerMonster.hp / playerMonster.maxHp) * 100;
-        html += `<div class="progress-fill ally" style="width: ${allyHpPercent}%"></div>`;
+        let allyHpClass = 'high';
+        if (allyHpPercent < 25) allyHpClass = 'low';
+        else if (allyHpPercent < 50) allyHpClass = 'mid';
+        html += `<div class="progress-fill ally ${allyHpClass}" style="width: ${allyHpPercent}%"></div>`;
         html += `</div>`;
         html += `<div class="stat-value">${playerMonster.hp}/${playerMonster.maxHp}</div>`;
         html += `</div>`;

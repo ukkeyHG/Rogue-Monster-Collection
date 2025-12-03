@@ -1106,9 +1106,17 @@ body {
     text-align: center;
 }
 
-.rank-1 .ranking-rank { color: #ffd700; }
-.rank-2 .ranking-rank { color: #c0c0c0; }
-.rank-3 .ranking-rank { color: #cd7f32; }
+.rank-1 .ranking-rank {
+    color: #ffd700;
+}
+
+.rank-2 .ranking-rank {
+    color: #c0c0c0;
+}
+
+.rank-3 .ranking-rank {
+    color: #cd7f32;
+}
 
 .ranking-nickname {
     font-size: 16px;
@@ -1173,7 +1181,8 @@ body {
     margin-top: 20px;
 }
 
-.submit-btn, .cancel-btn {
+.submit-btn,
+.cancel-btn {
     flex: 1;
     padding: 12px;
     border: none;
@@ -1218,4 +1227,20 @@ body {
     color: #ff6b6b;
     font-size: 13px;
     min-height: 20px;
+}
+
+/* HP Bar Colors */
+.progress-fill.high {
+    background: #4caf50 !important;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5) !important;
+}
+
+.progress-fill.mid {
+    background: #ffeb3b !important;
+    box-shadow: 0 0 8px rgba(255, 235, 59, 0.5) !important;
+}
+
+.progress-fill.low {
+    background: #f44336 !important;
+    box-shadow: 0 0 8px rgba(244, 67, 54, 0.5) !important;
 }
