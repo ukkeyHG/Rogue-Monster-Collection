@@ -200,12 +200,25 @@ class UI {
         const combatElement = document.getElementById('combat-ui');
         if (!combatElement) return;
 
+        const wasHidden = combatElement.style.display === 'none' || combatElement.style.display === '';
+
         if (!combat || !combat.isActive) {
             combatElement.style.display = 'none';
             return;
         }
 
         combatElement.style.display = 'block';
+
+        // 戦闘開始時（非表示から表示に切り替わった時）にサイドバーを最下部へスクロール
+        if (wasHidden) {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                // 少し遅延させてレンダリング後にスクロール
+                setTimeout(() => {
+                    sidebar.scrollTop = sidebar.scrollHeight;
+                }, 10);
+            }
+        }
 
         const playerMonster = combat.player.activeMonster;
         const enemy = combat.enemy;
@@ -229,20 +242,7 @@ class UI {
         html += '</div>';
 
         // 味方情報
-        html += '<div class="combat-ally">';
-        html += `<div class="ally-name">${playerMonster.emoji} ${playerMonster.name} Lv.${playerMonster.level}</div>`;
-        html += `<div class="stat-bar">`;
-        html += `<div class="stat-label">HP</div>`;
-        html += `<div class="progress-bar">`;
-        const allyHpPercent = (playerMonster.hp / playerMonster.maxHp) * 100;
-        let allyHpClass = 'high';
-        if (allyHpPercent < 25) allyHpClass = 'low';
-        else if (allyHpPercent < 50) allyHpClass = 'mid';
-        html += `<div class="progress-fill ally ${allyHpClass}" style="width: ${allyHpPercent}%"></div>`;
-        html += `</div>`;
-        html += `<div class="stat-value">${playerMonster.hp}/${playerMonster.maxHp}</div>`;
-        html += `</div>`;
-        html += '</div>';
+
 
         // 戦闘コマンド
         if (combat.turn === 'player') {
