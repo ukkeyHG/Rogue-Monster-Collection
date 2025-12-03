@@ -99,9 +99,7 @@ class Monster extends Entity {
         this.atk = stats.atk;
         this.def = stats.def;
         this.speed = stats.speed;
-        this.hp += hpIncrease; // レベルアップでHPも回復
-
-        if (this.hp > this.maxHp) this.hp = this.maxHp;
+        this.hp = this.maxHp; // レベルアップでHP全回復
     }
 
     useSkill(skillIndex, target) {
