@@ -4,7 +4,7 @@ class UI {
     constructor() {
         this.messageLog = [];
         this.maxMessages = 8;
-        this.isInventoryOpen = true;
+        this.isInventoryOpen = false;
 
         // 図鑑ボタンのイベントリスナー
         const dexBtn = document.getElementById('dex-btn');
@@ -101,7 +101,10 @@ class UI {
                 html += `<div class="stat-label">HP</div>`;
                 html += `<div class="progress-bar">`;
                 const hpPercent = (monster.hp / monster.maxHp) * 100;
-                html += `<div class="progress-fill" style="width: ${hpPercent}%"></div>`;
+                let hpClass = 'high';
+                if (hpPercent < 25) hpClass = 'low';
+                else if (hpPercent < 50) hpClass = 'mid';
+                html += `<div class="progress-fill ${hpClass}" style="width: ${hpPercent}%"></div>`;
                 html += `</div>`;
                 html += `<div class="stat-value">${monster.hp}/${monster.maxHp}</div>`;
                 html += `</div>`;
@@ -197,12 +200,25 @@ class UI {
         const combatElement = document.getElementById('combat-ui');
         if (!combatElement) return;
 
+        const wasHidden = combatElement.style.display === 'none' || combatElement.style.display === '';
+
         if (!combat || !combat.isActive) {
             combatElement.style.display = 'none';
             return;
         }
 
         combatElement.style.display = 'block';
+
+        // 戦闘開始時（非表示から表示に切り替わった時）にサイドバーを最下部へスクロール
+        if (wasHidden) {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                // 少し遅延させてレンダリング後にスクロール
+                setTimeout(() => {
+                    sidebar.scrollTop = sidebar.scrollHeight;
+                }, 10);
+            }
+        }
 
         const playerMonster = combat.player.activeMonster;
         const enemy = combat.enemy;
@@ -216,24 +232,17 @@ class UI {
         html += `<div class="stat-label">HP</div>`;
         html += `<div class="progress-bar">`;
         const enemyHpPercent = (enemy.hp / enemy.maxHp) * 100;
-        html += `<div class="progress-fill enemy" style="width: ${enemyHpPercent}%"></div>`;
+        let enemyHpClass = 'high';
+        if (enemyHpPercent < 25) enemyHpClass = 'low';
+        else if (enemyHpPercent < 50) enemyHpClass = 'mid';
+        html += `<div class="progress-fill enemy ${enemyHpClass}" style="width: ${enemyHpPercent}%"></div>`;
         html += `</div>`;
         html += `<div class="stat-value">${enemy.hp}/${enemy.maxHp}</div>`;
         html += `</div>`;
         html += '</div>';
 
         // 味方情報
-        html += '<div class="combat-ally">';
-        html += `<div class="ally-name">${playerMonster.emoji} ${playerMonster.name} Lv.${playerMonster.level}</div>`;
-        html += `<div class="stat-bar">`;
-        html += `<div class="stat-label">HP</div>`;
-        html += `<div class="progress-bar">`;
-        const allyHpPercent = (playerMonster.hp / playerMonster.maxHp) * 100;
-        html += `<div class="progress-fill ally" style="width: ${allyHpPercent}%"></div>`;
-        html += `</div>`;
-        html += `<div class="stat-value">${playerMonster.hp}/${playerMonster.maxHp}</div>`;
-        html += `</div>`;
-        html += '</div>';
+
 
         // 戦闘コマンド
         if (combat.turn === 'player') {
